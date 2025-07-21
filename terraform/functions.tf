@@ -1,7 +1,7 @@
 
 
 resource "google_cloudfunctions2_function" "default" {
-  name        = "handle-gce-instance"
+  name        = "instance-controller"
   location    = "us-central1"
   description = "A Cloud Function to start and stop GCE instances based on HTTP triggers."
 
@@ -18,9 +18,11 @@ resource "google_cloudfunctions2_function" "default" {
 
   service_config {
     max_instance_count = 1
+    min_instance_count = 0
     available_memory   = "256M"
     timeout_seconds    = 60
     environment_variables = {
+      LOG_EXECUTION_ID = "true"
       PROJECT_ID = var.project_id
       ZONE = "asia-east1-a"
       INSTANCE = "instance-20250714-084552"

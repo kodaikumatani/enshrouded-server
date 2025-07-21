@@ -1,6 +1,33 @@
 name: deploy
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
+run-name: |-
+  ${{ github.event_name == 'workflow_dispatch' && 'Manual' || 'Automatic' }} deploy
+
 jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - id: "deploy"
+        uses: "google-github-actions/deploy-cloud-functions@v3"
+        timeout-minutes: 10
+        with:
+          name: "instance-controller"
+          runtime: "go124"
+          source_dir: ./functions/instance-controller
+          entry_point: "InstanceController"
