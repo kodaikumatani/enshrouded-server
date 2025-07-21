@@ -1,1 +1,5 @@
 **/.terraform/*
+**/node_modules
+**/.env
+**/.DS_Store
+**/mise.toml
