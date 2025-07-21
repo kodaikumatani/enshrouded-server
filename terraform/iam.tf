@@ -26,9 +26,20 @@ module "project-iam-bindings" {
 ####################################
 # IAM policy for Cloud Run Service
 ####################################
-resource "google_cloud_run_service_iam_member" "member" {
-  location = google_cloudfunctions2_function.default.location
-  service  = google_cloudfunctions2_function.default.name
-  role     = "roles/run.invoker"
-  member   = "allUsers"
+module "cloud-run-services-iam-bindings" {
+  source  = "terraform-google-modules/iam/google//modules/cloud_run_services_iam"
+  version = "~> 8.1"
+
+  project            = var.project_id
+  cloud_run_services = [
+    google_cloudfunctions2_function.instance-controller.name,
+    google_cloudfunctions2_function.discord-interactions.name
+  ]
+  mode               = "authoritative"
+
+  bindings = {
+    "roles/run.invoker" = [
+      "allUsers"
+    ]
+  }
 }
