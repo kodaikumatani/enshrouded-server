@@ -1,4 +1,3 @@
-// Package helloworld provides a set of Cloud Functions samples.
 package helloworld
 
 import (
@@ -11,11 +10,11 @@ import (
 )
 
 func init() {
-	functions.HTTP("HelloHTTP", HelloHTTP)
+	functions.HTTP("HelloHTTP", helloHTTP)
 }
 
-// HelloHTTP is an HTTP Cloud Function with a request parameter.
-func HelloHTTP(w http.ResponseWriter, r *http.Request) {
+// helloHTTP is an HTTP Cloud Function with a request parameter.
+func helloHTTP(w http.ResponseWriter, r *http.Request) {
 	var d struct {
 		Name string `json:"name"`
 	}
