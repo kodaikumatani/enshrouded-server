@@ -2,6 +2,7 @@ package function
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -57,7 +58,11 @@ func start(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Instance started successfully.",
+	})
 }
 
 func stop(w http.ResponseWriter, _ *http.Request) {
@@ -77,18 +82,15 @@ func stop(w http.ResponseWriter, _ *http.Request) {
 		Instance: os.Getenv("INSTANCE"),
 	}
 
-	op, err := instancesClient.Stop(ctx, req)
-	if err != nil {
+	if _, err := instancesClient.Stop(ctx, req); err != nil {
 		log.Printf("unable to stop instance: %v", err)
 		http.Error(w, "unable to stop instance", http.StatusInternalServerError)
 		return
 	}
 
-	if err = op.Wait(ctx); err != nil {
-		log.Printf("unable to wait for the operation to complete: %v", err)
-		http.Error(w, "unable to wait for the operation to complete", http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Instance stoped successfully.",
+	})
 }
