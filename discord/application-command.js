@@ -12,7 +12,7 @@ const commands = [
         description: "GCE Instance start/stop",
         required: true,
         choices: [
-          { name: "start", value: "stop" },
+          { name: "start", value: "start" },
           { name: "stop", value: "stop" },
         ]
       },
