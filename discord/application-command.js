@@ -12,7 +12,7 @@ const commands = [
         description: "GCE Instance start/stop",
         required: true,
         choices: [
-          { name: "start", value: "stop" },
+          { name: "start", value: "start" },
           { name: "stop", value: "stop" },
         ]
       },
@@ -26,7 +26,7 @@ try {
   console.log('Started refreshing application (/) commands.');
 
   await rest.put(
-    Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
+    Routes.applicationCommands(process.env.CLIENT_ID),
     { body: commands }
   );
 

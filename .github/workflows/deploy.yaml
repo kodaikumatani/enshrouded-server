@@ -27,7 +27,8 @@ jobs:
         uses: "google-github-actions/deploy-cloud-functions@v3"
         timeout-minutes: 10
         with:
-          name: "instance-controller"
-          runtime: "go124"
-          source_dir: ./functions/instance-controller
-          entry_point: "InstanceController"
+          name: "discord-interactions"
+          runtime: "nodejs22"
+          source_dir: ./functions/discord-interactions
+          entry_point: "invoke"
+          memory: 512Mi

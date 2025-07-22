@@ -6,6 +6,11 @@ resource "google_service_account" "deployer" {
   display_name = "GitHub Actions Cloud Functions Deployer"
 }
 
+resource "google_service_account" "runner" {
+  account_id   = "cloud-functions-runner"
+  display_name = "GitHub Actions Cloud Functions Deployer"
+}
+
 ####################################
 # IAM policy for projects
 ####################################
@@ -20,26 +25,21 @@ module "project-iam-bindings" {
     "roles/cloudfunctions.developer" = [
       "serviceAccount:${google_service_account.deployer.email}"
     ]
+    "roles/iam.serviceAccountUser" = [
+      "serviceAccount:${google_service_account.deployer.email}"
+    ],
+    "roles/compute.admin" = [
+      "serviceAccount:${google_service_account.runner.email}"
+    ]
   }
 }
 
 ####################################
 # IAM policy for Cloud Run Service
 ####################################
-module "cloud-run-services-iam-bindings" {
-  source  = "terraform-google-modules/iam/google//modules/cloud_run_services_iam"
-  version = "~> 8.1"
-
-  project            = var.project_id
-  cloud_run_services = [
-    google_cloudfunctions2_function.instance-controller.name,
-    google_cloudfunctions2_function.discord-interactions.name
-  ]
-  mode               = "authoritative"
-
-  bindings = {
-    "roles/run.invoker" = [
-      "allUsers"
-    ]
-  }
+resource "google_cloud_run_service_iam_member" "member" {
+  location = google_cloudfunctions2_function.default.location
+  service  = google_cloudfunctions2_function.default.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
 }
