@@ -11,7 +11,7 @@ resource "google_storage_bucket" "default" {
 data "archive_file" "default" {
   type        = "zip"
   output_path = "/tmp/function-source.zip"
-  source_dir  = "template/go124/http/"
+  source_dir  = "template/nodejs22/"
 }
 
 resource "google_storage_bucket_object" "object" {

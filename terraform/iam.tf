@@ -6,6 +6,11 @@ resource "google_service_account" "deployer" {
   display_name = "GitHub Actions Cloud Functions Deployer"
 }
 
+resource "google_service_account" "runner" {
+  account_id   = "cloud-functions-runner"
+  display_name = "GitHub Actions Cloud Functions Deployer"
+}
+
 ####################################
 # IAM policy for projects
 ####################################
@@ -19,6 +24,12 @@ module "project-iam-bindings" {
   bindings = {
     "roles/cloudfunctions.developer" = [
       "serviceAccount:${google_service_account.deployer.email}"
+    ]
+    "roles/iam.serviceAccountUser" = [
+      "serviceAccount:${google_service_account.deployer.email}"
+    ],
+    "roles/compute.admin" = [
+      "serviceAccount:${google_service_account.runner.email}"
     ]
   }
 }
