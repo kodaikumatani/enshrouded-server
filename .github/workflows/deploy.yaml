@@ -31,4 +31,4 @@ jobs:
           runtime: "nodejs22"
           source_dir: ./functions/discord-interactions
           entry_point: "invoke"
-          memory: 512Mi
+          memory: 1024Mi
