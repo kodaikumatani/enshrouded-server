@@ -15,8 +15,8 @@ resource "google_service_account" "runner" {
 # IAM policy for projects
 ####################################
 module "project-iam-bindings" {
-  source   = "terraform-google-modules/iam/google//modules/projects_iam"
-  version  = "~> 8.0"
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
+  version = "~> 8.0"
 
   projects = [var.project_id]
   mode     = "additive"
@@ -42,4 +42,22 @@ resource "google_cloud_run_service_iam_member" "member" {
   service  = google_cloudfunctions2_function.default.name
   role     = "roles/run.invoker"
   member   = "allUsers"
+}
+
+####################################
+# IAM policy for Secret Manager Secret
+####################################
+module "secret_manager_iam" {
+  source  = "terraform-google-modules/iam/google//modules/secret_manager_iam"
+  version = "~> 8.1"
+
+  project = var.project_id
+  secrets = [module.secret-manager.name]
+  mode    = "additive"
+
+  bindings = {
+    "roles/secretmanager.secretAccessor" = [
+      "serviceAccount:${google_service_account.runner.email}"
+    ]
+  }
 }
