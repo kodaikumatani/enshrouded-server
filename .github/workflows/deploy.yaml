@@ -28,7 +28,7 @@ jobs:
         timeout-minutes: 10
         with:
           name: "discord-interactions"
-          runtime: "nodejs22"
+          runtime: "go124"
           source_dir: ./functions/discord-interactions
-          entry_point: "invoke"
-          memory: 1024Mi
+          entry_point: "InstanceController"
+          # memory: 1024Mi
