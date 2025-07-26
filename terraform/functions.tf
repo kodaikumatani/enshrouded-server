@@ -61,9 +61,8 @@ resource "google_cloudfunctions2_function" "discord-interactions-node" {
     service_account_email = google_service_account.discord-interactions.email
     environment_variables = {
       CLIENT_PUBLIC_KEY = "c0f9c3f75e45e1f5a69a6a18055c27636ca093df4b56250da90eaf75d5e28d68"
-      PROJECT_ID        = var.project_id
-      ZONE              = "asia-east1-a"
-      INSTANCE          = "instance-20250714-084552"
+      PROJECT_ID        = google_pubsub_topic.discord-vm-control.project
+      TOPIC_NAME = google_pubsub_topic.discord-vm-control.name
     }
   }
 
