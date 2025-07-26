@@ -47,7 +47,7 @@ jobs:
         timeout-minutes: 10
         with:
           name: "vm-instance-control"
-          runtime: "nodejs22"
+          runtime: "go124"
           source_dir: ./functions/vm-instance-control
           entry_point: "VmInstanceControl"
 
