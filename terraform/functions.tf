@@ -23,12 +23,12 @@ resource "google_cloudfunctions2_function" "default" {
       ZONE              = "asia-east1-a"
       INSTANCE          = "instance-20250714-084552"
     }
-    secret_environment_variables {
-      key        = "WEBHOOK_URL"
-      project_id = var.project_id
-      secret     = module.secret-manager.env_vars.SECRET.secret
-      version    = "latest"
-    }
+    # secret_environment_variables {
+    #   key        = "WEBHOOK_URL"
+    #   project_id = var.project_id
+    #   secret     = module.secret-manager.env_vars.SECRET.secret
+    #   version    = "latest"
+    # }
   }
 
   lifecycle {
@@ -40,8 +40,8 @@ resource "google_cloudfunctions2_function" "default" {
   }
 }
 
-resource "google_cloudfunctions2_function" "discord-interactions" {
-  name        = "discord-interactions"
+resource "google_cloudfunctions2_function" "discord-interactions-node" {
+  name        = "discord-interactions-node"
   location    = "us-central1"
   description = "Discord Interactions webhook."
 
@@ -64,12 +64,6 @@ resource "google_cloudfunctions2_function" "discord-interactions" {
       PROJECT_ID        = var.project_id
       ZONE              = "asia-east1-a"
       INSTANCE          = "instance-20250714-084552"
-    }
-    secret_environment_variables {
-      key        = "WEBHOOK_URL"
-      project_id = var.project_id
-      secret     = module.secret-manager.env_vars.SECRET.secret
-      version    = "latest"
     }
   }
 

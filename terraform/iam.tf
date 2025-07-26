@@ -47,7 +47,10 @@ module "cloud-run-services-iam-bindings" {
   version = "~> 8.1"
 
   project            = var.project_id
-  cloud_run_services = [google_cloudfunctions2_function.default.name]
+  cloud_run_services = [
+    google_cloudfunctions2_function.default.name,
+    google_cloudfunctions2_function.discord-interactions-node.name,
+  ]
   mode               = "authoritative"
 
   bindings = {
@@ -60,20 +63,20 @@ module "cloud-run-services-iam-bindings" {
 ####################################
 # IAM policy for Secret Manager Secret
 ####################################
-module "secret_manager_iam" {
-  source  = "terraform-google-modules/iam/google//modules/secret_manager_iam"
-  version = "~> 8.1"
+# module "secret_manager_iam" {
+#   source  = "terraform-google-modules/iam/google//modules/secret_manager_iam"
+#   version = "~> 8.1"
 
-  project = var.project_id
-  secrets = [module.secret-manager.name]
-  mode    = "additive"
+#   project = var.project_id
+#   secrets = [module.secret-manager.name]
+#   mode    = "additive"
 
-  bindings = {
-    "roles/secretmanager.secretAccessor" = [
-      "serviceAccount:${google_service_account.default.email}",
-    ]
-  }
-}
+#   bindings = {
+#     "roles/secretmanager.secretAccessor" = [
+#       "serviceAccount:${google_service_account.default.email}",
+#     ]
+#   }
+# }
 
 ####################################
 # IAM policy for PubSub Topic
