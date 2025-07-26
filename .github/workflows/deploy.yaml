@@ -23,21 +23,21 @@ jobs:
         with:
           credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-      # - id: "deploy"
-      #   uses: "google-github-actions/deploy-cloud-functions@v3"
-      #   timeout-minutes: 10
-      #   with:
-      #     name: "discord-interactions"
-      #     runtime: "go124"
-      #     source_dir: ./functions/discord-interactions
-      #     entry_point: "InstanceController"
-
       - id: "deploy"
         uses: "google-github-actions/deploy-cloud-functions@v3"
         timeout-minutes: 10
         with:
-          name: "discord-interactions-node"
-          runtime: "nodejs22"
-          source_dir: ./functions/discord-interactions-node
-          entry_point: "discordInteractions"
+          name: "discord-interactions"
+          runtime: "go124"
+          source_dir: ./functions/discord-interactions
+          entry_point: "InstanceController"
+
+      # - id: "deploy"
+      #   uses: "google-github-actions/deploy-cloud-functions@v3"
+      #   timeout-minutes: 10
+      #   with:
+      #     name: "discord-interactions-node"
+      #     runtime: "nodejs22"
+      #     source_dir: ./functions/discord-interactions-node
+      #     entry_point: "discordInteractions"
 

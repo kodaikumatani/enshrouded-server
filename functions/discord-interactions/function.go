@@ -1,7 +1,6 @@
 package discordinteractions
 
 import (
-	"bytes"
 	"context"
 	"crypto/ed25519"
 	"encoding/hex"
@@ -117,25 +116,24 @@ func start(ctx context.Context) error {
 		Instance: os.Getenv("INSTANCE"),
 	}
 
-	op, err := instancesClient.Start(ctx, req)
-	if err != nil {
+	if _, err := instancesClient.Start(ctx, req); err != nil {
 		return errors.Wrap(err, "unable to start instance")
 	}
 
-	if err = op.Wait(ctx); err != nil {
-		return errors.Wrap(err, "failed to wait for instance start operation")
-	}
+	// if err = op.Wait(ctx); err != nil {
+	// 	return errors.Wrap(err, "failed to wait for instance start operation")
+	// }
 
-	response, err := json.Marshal(map[string]string{
-		"content": "The VM has started successfully.",
-	})
-	if err != nil {
-		return errors.Wrap(err, "failed to marshal response")
-	}
+	// response, err := json.Marshal(map[string]string{
+	// 	"content": "The VM has started successfully.",
+	// })
+	// if err != nil {
+	// 	return errors.Wrap(err, "failed to marshal response")
+	// }
 
-	if _, err := http.Post(os.Getenv("WEBHOOK_URL"), "application/json", bytes.NewReader(response)); err != nil {
-		return errors.Wrap(err, "failed to send webhook notification")
-	}
+	// if _, err := http.Post(os.Getenv("WEBHOOK_URL"), "application/json", bytes.NewReader(response)); err != nil {
+	// 	return errors.Wrap(err, "failed to send webhook notification")
+	// }
 
 	return nil
 }
@@ -153,25 +151,24 @@ func stop(ctx context.Context) error {
 		Instance: os.Getenv("INSTANCE"),
 	}
 
-	op, err := instancesClient.Stop(ctx, req)
-	if err != nil {
+	if _, err := instancesClient.Stop(ctx, req); err != nil {
 		return errors.Wrap(err, "unable to stop instance")
 	}
 
-	if err = op.Wait(ctx); err != nil {
-		return errors.Wrap(err, "failed to wait for instance start operation")
-	}
+	// if err = op.Wait(ctx); err != nil {
+	// 	return errors.Wrap(err, "failed to wait for instance start operation")
+	// }
 
-	response, err := json.Marshal(map[string]string{
-		"content": "The VM has stop successfully.",
-	})
-	if err != nil {
-		return errors.Wrap(err, "failed to marshal response")
-	}
+	// response, err := json.Marshal(map[string]string{
+	// 	"content": "The VM has stop successfully.",
+	// })
+	// if err != nil {
+	// 	return errors.Wrap(err, "failed to marshal response")
+	// }
 
-	if _, err := http.Post(os.Getenv("WEBHOOK_URL"), "application/json", bytes.NewReader(response)); err != nil {
-		return errors.Wrap(err, "failed to send webhook notification")
-	}
+	// if _, err := http.Post(os.Getenv("WEBHOOK_URL"), "application/json", bytes.NewReader(response)); err != nil {
+	// 	return errors.Wrap(err, "failed to send webhook notification")
+	// }
 
 	return nil
 }
