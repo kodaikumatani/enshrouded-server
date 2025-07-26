@@ -11,6 +11,11 @@ resource "google_service_account" "runner" {
   display_name = "GitHub Actions Cloud Functions Deployer"
 }
 
+resource "google_service_account" "discord-interactions" {
+  account_id   = "discord-intaractons-sa"
+  display_name = "discord-interactoins service account"
+}
+
 ####################################
 # IAM policy for projects
 ####################################
@@ -37,11 +42,19 @@ module "project-iam-bindings" {
 ####################################
 # IAM policy for Cloud Run Service
 ####################################
-resource "google_cloud_run_service_iam_member" "member" {
-  location = google_cloudfunctions2_function.default.location
-  service  = google_cloudfunctions2_function.default.name
-  role     = "roles/run.invoker"
-  member   = "allUsers"
+module "cloud-run-services-iam-bindings" {
+  source  = "terraform-google-modules/iam/google//modules/cloud_run_services_iam"
+  version = "~> 8.1"
+
+  project            = var.project_id
+  cloud_run_services = [google_cloudfunctions2_function.default.name]
+  mode               = "authoritative"
+
+  bindings = {
+    "roles/run.invoker" = [
+      "allUsers"
+    ]
+  }
 }
 
 ####################################
@@ -57,7 +70,25 @@ module "secret_manager_iam" {
 
   bindings = {
     "roles/secretmanager.secretAccessor" = [
-      "serviceAccount:${google_service_account.runner.email}"
+      "serviceAccount:${google_service_account.default.email}",
+    ]
+  }
+}
+
+####################################
+# IAM policy for PubSub Topic
+####################################
+module "pubsub_topic-iam-bindings" {
+  source    = "terraform-google-modules/iam/google//modules/pubsub_topics_iam"
+  version   = "~> 8.0"
+
+  project       = var.project_id
+  pubsub_topics = [google_pubsub_topic.discord-vm-control.name]
+  mode          = "authoritative"
+
+  bindings = {
+    "roles/pubsub.publisher" = [
+      "serviceAccount:${google_service_account.discord-interactions.email}",
     ]
   }
 }
