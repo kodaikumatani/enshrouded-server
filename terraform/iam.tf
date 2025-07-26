@@ -12,8 +12,13 @@ resource "google_service_account" "runner" {
 }
 
 resource "google_service_account" "discord-interactions" {
-  account_id   = "discord-intaractons-sa"
-  display_name = "discord-interactoins service account"
+  account_id   = "discord-interactions-sa"
+  display_name = "discord-interactions service account"
+}
+
+resource "google_service_account" "vm-instance-control" {
+  account_id   = "vm-instance-control-sa"
+  display_name = "vm-instance-control service account"
 }
 
 ####################################
@@ -34,7 +39,8 @@ module "project-iam-bindings" {
       "serviceAccount:${google_service_account.deployer.email}"
     ],
     "roles/compute.admin" = [
-      "serviceAccount:${google_service_account.runner.email}"
+      "serviceAccount:${google_service_account.runner.email}",
+      "serviceAccount:${google_service_account.vm-instance-control.email}"
     ]
   }
 }
@@ -46,12 +52,12 @@ module "cloud-run-services-iam-bindings" {
   source  = "terraform-google-modules/iam/google//modules/cloud_run_services_iam"
   version = "~> 8.1"
 
-  project            = var.project_id
+  project = var.project_id
   cloud_run_services = [
     google_cloudfunctions2_function.default.name,
     google_cloudfunctions2_function.discord-interactions-node.name,
   ]
-  mode               = "authoritative"
+  mode = "authoritative"
 
   bindings = {
     "roles/run.invoker" = [
@@ -63,27 +69,27 @@ module "cloud-run-services-iam-bindings" {
 ####################################
 # IAM policy for Secret Manager Secret
 ####################################
-# module "secret_manager_iam" {
-#   source  = "terraform-google-modules/iam/google//modules/secret_manager_iam"
-#   version = "~> 8.1"
+module "secret_manager_iam" {
+  source  = "terraform-google-modules/iam/google//modules/secret_manager_iam"
+  version = "~> 8.1"
 
-#   project = var.project_id
-#   secrets = [module.secret-manager.name]
-#   mode    = "additive"
+  project = var.project_id
+  secrets = [module.secret-manager.name]
+  mode    = "additive"
 
-#   bindings = {
-#     "roles/secretmanager.secretAccessor" = [
-#       "serviceAccount:${google_service_account.default.email}",
-#     ]
-#   }
-# }
+  bindings = {
+    "roles/secretmanager.secretAccessor" = [
+      "serviceAccount:${google_service_account.vm-instance-control.email}",
+    ]
+  }
+}
 
 ####################################
 # IAM policy for PubSub Topic
 ####################################
 module "pubsub_topic-iam-bindings" {
-  source    = "terraform-google-modules/iam/google//modules/pubsub_topics_iam"
-  version   = "~> 8.0"
+  source  = "terraform-google-modules/iam/google//modules/pubsub_topics_iam"
+  version = "~> 8.0"
 
   project       = var.project_id
   pubsub_topics = [google_pubsub_topic.discord-vm-control.name]

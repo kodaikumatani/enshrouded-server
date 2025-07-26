@@ -32,13 +32,22 @@ jobs:
       #     source_dir: ./functions/discord-interactions
       #     entry_point: "InstanceController"
 
+      # - id: "deploy"
+      #   uses: "google-github-actions/deploy-cloud-functions@v3"
+      #   timeout-minutes: 10
+      #   with:
+      #     name: "discord-interactions-node"
+      #     runtime: "nodejs22"
+      #     source_dir: ./functions/discord-interactions-node
+      #     entry_point: "discordInteractions"
+      #     memory: 512Mi
+
       - id: "deploy"
         uses: "google-github-actions/deploy-cloud-functions@v3"
         timeout-minutes: 10
         with:
-          name: "discord-interactions-node"
+          name: "vm-instance-control"
           runtime: "nodejs22"
-          source_dir: ./functions/discord-interactions-node
-          entry_point: "discordInteractions"
-          memory: 512Mi
+          source_dir: ./functions/vm-instance-control
+          entry_point: "VmInstanceControl"
 

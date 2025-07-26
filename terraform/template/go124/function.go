@@ -1,30 +1,44 @@
+// Package helloworld provides a set of Cloud Functions samples.
 package helloworld
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"html"
-	"net/http"
+	"log"
 
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
+	"github.com/cloudevents/sdk-go/v2/event"
 )
 
 func init() {
-	functions.HTTP("HelloHTTP", helloHTTP)
+	functions.CloudEvent("HelloPubSub", helloPubSub)
 }
 
-// helloHTTP is an HTTP Cloud Function with a request parameter.
-func helloHTTP(w http.ResponseWriter, r *http.Request) {
-	var d struct {
-		Name string `json:"name"`
+// MessagePublishedData contains the full Pub/Sub message
+// See the documentation for more details:
+// https://cloud.google.com/eventarc/docs/cloudevents#pubsub
+type MessagePublishedData struct {
+	Message PubSubMessage
+}
+
+// PubSubMessage is the payload of a Pub/Sub event.
+// See the documentation for more details:
+// https://cloud.google.com/pubsub/docs/reference/rest/v1/PubsubMessage
+type PubSubMessage struct {
+	Data []byte `json:"data"`
+}
+
+// helloPubSub consumes a CloudEvent message and extracts the Pub/Sub message.
+func helloPubSub(ctx context.Context, e event.Event) error {
+	var msg MessagePublishedData
+	if err := e.DataAs(&msg); err != nil {
+		return fmt.Errorf("event.DataAs: %v", err)
 	}
-	if err := json.NewDecoder(r.Body).Decode(&d); err != nil {
-		fmt.Fprint(w, "Hello, World!")
-		return
+
+	name := string(msg.Message.Data) // Automatically decoded from base64.
+	if name == "" {
+		name = "World"
 	}
-	if d.Name == "" {
-		fmt.Fprint(w, "Hello, World!")
-		return
-	}
-	fmt.Fprintf(w, "Hello, %s!", html.EscapeString(d.Name))
+	log.Printf("Hello, %s!", name)
+	return nil
 }

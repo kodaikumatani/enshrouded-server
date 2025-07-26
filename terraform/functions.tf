@@ -42,7 +42,7 @@ resource "google_cloudfunctions2_function" "default" {
 
 resource "google_cloudfunctions2_function" "discord-interactions-node" {
   name        = "discord-interactions-node"
-  location    = "us-central1"
+  location    = var.region
   description = "Discord Interactions webhook."
 
   build_config {
@@ -62,8 +62,59 @@ resource "google_cloudfunctions2_function" "discord-interactions-node" {
     environment_variables = {
       CLIENT_PUBLIC_KEY = "c0f9c3f75e45e1f5a69a6a18055c27636ca093df4b56250da90eaf75d5e28d68"
       PROJECT_ID        = google_pubsub_topic.discord-vm-control.project
-      TOPIC_NAME = google_pubsub_topic.discord-vm-control.name
+      TOPIC_NAME        = google_pubsub_topic.discord-vm-control.name
     }
+  }
+
+  lifecycle {
+    ignore_changes = [
+      build_config.0.entry_point,
+      build_config.0.source,
+      build_config.0.docker_repository,
+    ]
+  }
+}
+
+resource "google_cloudfunctions2_function" "vm-instance-control" {
+  name        = "vm-instance-control"
+  location    = var.region
+  description = "Start and stop a VM instance"
+
+  build_config {
+    runtime     = "go124"
+    entry_point = "HelloPubSub" # Set the entry point
+    source {
+      storage_source {
+        bucket = google_storage_bucket.go124.name
+        object = google_storage_bucket_object.go124.name
+      }
+    }
+  }
+
+  service_config {
+    timeout_seconds = 60
+    environment_variables = {
+      CLIENT_PUBLIC_KEY = "c0f9c3f75e45e1f5a69a6a18055c27636ca093df4b56250da90eaf75d5e28d68"
+      PROJECT_ID        = var.project_id
+      ZONE              = "asia-east1-a"
+      INSTANCE          = "instance-20250714-084552"
+    }
+    secret_environment_variables {
+      key        = "WEBHOOK_URL"
+      project_id = var.project_id
+      secret     = module.secret-manager.env_vars.SECRET.secret
+      version    = "latest"
+    }
+    ingress_settings               = "ALLOW_INTERNAL_ONLY"
+    all_traffic_on_latest_revision = true
+    service_account_email          = google_service_account.vm-instance-control.email
+  }
+
+  event_trigger {
+    trigger_region = var.region
+    event_type     = "google.cloud.pubsub.topic.v1.messagePublished"
+    pubsub_topic   = google_pubsub_topic.discord-vm-control.id
+    retry_policy   = "RETRY_POLICY_RETRY"
   }
 
   lifecycle {
