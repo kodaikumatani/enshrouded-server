@@ -121,7 +121,7 @@ func stopInstance(ctx context.Context, logger *slog.Logger) ([]byte, error) {
 	}
 
 	if err = op.Wait(ctx); err != nil {
-		return nil, errors.Wrap(err, "failed to wait for instance start operation")
+		return nil, errors.Wrap(err, "failed to wait for instance stop operation")
 	}
 
 	logger.Info("Instance has been successfully stopped.")
