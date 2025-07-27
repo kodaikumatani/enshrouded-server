@@ -1,6 +1,6 @@
 provider "google" {
-  project      = var.project_id
-  region       = var.region
+  project      = local.project_id
+  region       = local.region
   access_token = data.google_service_account_access_token.default.access_token
 }
 
