@@ -35,7 +35,7 @@ functions.http('discordInteractions', async (req, res) => {
       await pubsub.topic(topicName).publishMessage({data: Buffer.from(command)})
     } catch (error) {
       console.error(error);
-      return res.status(500).end('Faild to push message');
+      return res.status(500).end('Failed to push message');
     }
 
     res.send({
