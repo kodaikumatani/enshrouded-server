@@ -7,9 +7,9 @@ import {
 import { PubSub } from '@google-cloud/pubsub';
 
 const clientPublicKey = process.env.CLIENT_PUBLIC_KEY;
-const projectID = process.env.PROJECT_ID
+const projectId = process.env.PROJECT_ID
 const topicName = process.env.TOPIC_NAME
-const pubsub = new PubSub({PROJECT_ID: projectID});
+const pubsub = new PubSub({projectId});
 
 functions.http('discordInteractions', async (req, res) => {
   // Verify the request
