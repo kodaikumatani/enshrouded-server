@@ -30,7 +30,12 @@ functions.http('discordInteractions', async (req, res) => {
 
   if (interaction && interaction.type === InteractionType.APPLICATION_COMMAND) {
     const command = interaction.data.options?.[0]?.value; // "start" or "stop"
-    await pubsub.topic(topicName).publishMessage({data: Buffer.from(command)})
+
+    try {
+      await pubsub.topic(topicName).publishMessage({data: Buffer.from(command)})
+    } catch (error) {
+      console.error(error);
+    }
 
     res.send({
       type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
