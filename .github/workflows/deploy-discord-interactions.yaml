@@ -1,0 +1,34 @@
+name: deploy discord-interactions
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+run-name: |-
+  ${{ github.event_name == 'workflow_dispatch' && 'Manual' || 'Automatic' }} deploy discord-interactions
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - id: "deploy"
+        uses: "google-github-actions/deploy-cloud-functions@v3"
+        timeout-minutes: 10
+        with:
+          name: "discord-interactions"
+          runtime: "nodejs22"
+          source_dir: ./functions/discord-interactions
+          entry_point: "discordInteractions"
+          memory: 512Mi

@@ -1,4 +1,4 @@
-name: deploy
+name: deploy vm-instance-control
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 run-name: |-
-  ${{ github.event_name == 'workflow_dispatch' && 'Manual' || 'Automatic' }} deploy
+  ${{ github.event_name == 'workflow_dispatch' && 'Manual' || 'Automatic' }} deploy vm-instance-control
 
 jobs:
   update:
@@ -27,8 +27,8 @@ jobs:
         uses: "google-github-actions/deploy-cloud-functions@v3"
         timeout-minutes: 10
         with:
-          name: "discord-interactions"
+          name: "vm-instance-control"
           runtime: "go124"
-          source_dir: ./functions/discord-interactions
-          entry_point: "InstanceController"
-          # memory: 1024Mi
+          source_dir: ./functions/vm-instance-control
+          entry_point: "VmInstanceControl"
+
