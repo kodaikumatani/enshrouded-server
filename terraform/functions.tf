@@ -8,8 +8,8 @@ resource "google_cloudfunctions2_function" "discord-interactions" {
     entry_point = "helloHttp" # Set the entry point
     source {
       storage_source {
-        bucket = google_storage_bucket.nodejs22.name
-        object = google_storage_bucket_object.nodejs22.name
+        bucket = google_storage_bucket.http.name
+        object = google_storage_bucket_object.http.name
       }
     }
   }
@@ -41,12 +41,12 @@ resource "google_cloudfunctions2_function" "vm-instance-control" {
   description = "Start and stop a VM instance"
 
   build_config {
-    runtime     = "go124"
-    entry_point = "HelloPubSub" # Set the entry point
+    runtime     = "nodejs22"
+    entry_point = "helloPubSub" # Set the entry point
     source {
       storage_source {
-        bucket = google_storage_bucket.go124.name
-        object = google_storage_bucket_object.go124.name
+        bucket = google_storage_bucket.pubsub.name
+        object = google_storage_bucket_object.pubsub.name
       }
     }
   }
