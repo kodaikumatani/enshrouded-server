@@ -1,0 +1,16 @@
+{
+  "name": "vm-instance-control",
+  "version": "1.0.0",
+  "main": "function.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google-cloud/compute": "^5.3.0",
+    "@google-cloud/functions-framework": "^4.0.0"
+  }
+}
